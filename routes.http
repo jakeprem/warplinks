@@ -1,0 +1,24 @@
+### Register
+# @name register
+POST http://localhost:8787/-/register
+content-type: application/json
+
+{
+    "email": "admin@localhost",
+    "password": "admin",
+    "inviteCode": "123456"
+}
+
+### Login
+@hashedPassword = {{register.response.body.hashedPassword}}
+
+# @name login
+POST http://localhost:8787/-/login
+content-type: application/json
+
+
+{
+    "email": "admin@localhost",
+    "password": "admin",
+    "hashedPassword": "{{hashedPassword}}"
+}
