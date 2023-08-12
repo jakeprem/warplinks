@@ -1,8 +1,10 @@
-import { html as htmlResponse } from 'itty-router';
+import { IRequest, html as htmlResponse } from 'itty-router';
 
 const html = String.raw;
 
-export const linksPage = ({ userEmail }: { userEmail: string }) => {
+export const linksPage = ({ request, userEmail }: { request: IRequest; userEmail: string }) => {
+	const colo = request.cf?.colo;
+
 	const template = html`
 		<html>
 			<head>
@@ -30,7 +32,7 @@ export const linksPage = ({ userEmail }: { userEmail: string }) => {
 						.then((x) => x.links);
 				};
 			</script>
-			<h1>Yeet Links</h1>
+			<h1>Yeet Links (${colo})</h1>
 			<p x-data="{}">Welcome, ${userEmail} <button @click="await logout()">Logout</button></p>
 			<h2>Links</h2>
 			<table class="table-auto" x-data="{ links: [] }" x-init="links = await fetchLinks()">

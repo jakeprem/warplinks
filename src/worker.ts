@@ -36,7 +36,7 @@ router
 			return loginPage();
 		}
 
-		return linksPage({ userEmail: user.email });
+		return linksPage({ userEmail: user.email, request });
 	})
 	.post('/-/login', withContent, async (request, extra) => {
 		const { db, pepper } = extra;
