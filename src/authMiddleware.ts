@@ -35,7 +35,7 @@ export const withRequireUser = async (request: IRequest, extra: { db: DrizzleD1D
 //
 // All 3 approaches could return a promise from here that could be resolved in paralell with the link,
 // but we'd need to profile to see which one is actually fastest.
-export const withFastRequireUser = async (request: IRequest, extra: { db: DrizzleD1Database; pepper: string }) => {
+export const withFastRequireUser = async (request: IRequest, extra: { db: DrizzleD1Database; pepper: string; waitUntil: Function }) => {
 	const sessionId = extractSessionId(request);
 	if (!sessionId) {
 		return new Response('Please log in.', {

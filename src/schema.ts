@@ -39,3 +39,5 @@ export const links = sqliteTable(
 		keyIdx: uniqueIndex('keyIdx').on(links.key),
 	})
 );
+
+export type Link = InferModel<typeof links>;

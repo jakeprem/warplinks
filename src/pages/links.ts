@@ -14,20 +14,20 @@ export const linksPage = ({ request, userEmail }: { request: IRequest; userEmail
 			<script src="//unpkg.com/alpinejs" defer></script>
 			<script>
 				const logout = async () => {
-					await fetch('/-/logout', {
+					await fetch('/-/auth/logout', {
 						method: 'POST',
 					});
 					window.location.reload();
 				};
 
 				const fetchCodes = async () => {
-					return fetch('/-/invite_codes')
+					return fetch('/-/api/invite_codes')
 						.then((res) => res.json())
 						.then((x) => x.codes);
 				};
 
 				const fetchLinks = async () => {
-					return fetch('/-/links')
+					return fetch('/-/api/links')
 						.then((res) => res.json())
 						.then((x) => x.links);
 				};
