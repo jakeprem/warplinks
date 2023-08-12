@@ -13,8 +13,6 @@ export interface Env {
 	DB: D1Database;
 }
 
-type Extras = [db: D1Database; pepper: string; waitUntil: Function];
-
 const router = Router();
 router
 	.get('/', async (request, extra) => {
