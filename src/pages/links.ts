@@ -23,9 +23,34 @@ export const linksPage = ({ userEmail }: { userEmail: string }) => {
 						.then((res) => res.json())
 						.then((x) => x.codes);
 				};
+
+				const fetchLinks = async () => {
+					return fetch('/-/links')
+						.then((res) => res.json())
+						.then((x) => x.links);
+				};
 			</script>
 			<h1>Yeet Links</h1>
 			<p x-data="{}">Welcome, ${userEmail} <button @click="await logout()">Logout</button></p>
+			<h2>Links</h2>
+			<table class="table-auto" x-data="{ links: [] }" x-init="links = await fetchLinks()">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Key</th>
+						<th>Destination</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template x-for="link in links" :key="link.id">
+						<tr>
+							<td x-text="link.name"></td>
+							<td x-text="link.key"></td>
+							<td x-text="link.destination"></td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
 			<h2>Invite Codes</h2>
 			<table class="table-auto" x-data="{ codes: [] }" x-init="codes = await fetchCodes()">
 				<thead>

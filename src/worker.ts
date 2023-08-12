@@ -1,24 +1,19 @@
-import { error, html, json, Router, withContent } from 'itty-router';
+import { error, html, IRequest, json, Router, withContent } from 'itty-router';
 import { drizzle } from 'drizzle-orm/d1';
 
 import { hash, verify } from './passwordHasher';
-import { authRouter } from './authRouter';
-import { inviteCodes, sessions, users } from './schema';
+import { inviteCodes, links, sessions, users } from './schema';
 import { and, eq } from 'drizzle-orm';
 import { loginPage } from './pages/login';
 import { linksPage } from './pages/links';
+import { extractSessionId } from './utils';
+import { withFastRequireUser, withRequireUser } from './authMiddleware';
 
 export interface Env {
 	DB: D1Database;
 }
 
-const extractSessionId = (request: Request) => {
-	return request.headers
-		.get('cookie')
-		?.split(';')
-		.find((c) => c.startsWith('sessionId='))
-		?.split('=')[1];
-};
+type Extras = [db: D1Database; pepper: string; waitUntil: Function];
 
 const router = Router();
 router
@@ -43,7 +38,7 @@ router
 			return loginPage();
 		}
 
-		return linksPage({ userEmail: user.email, db });
+		return linksPage({ userEmail: user.email });
 	})
 	.post('/-/login', withContent, async (request, extra) => {
 		const { db, pepper } = extra;
@@ -75,10 +70,8 @@ router
 
 		try {
 			const sessionId = crypto.randomUUID();
-			console.log(sessionId);
 			const res = await db.insert(sessions).values({ sessionId, userId: possibleUser.id }).run();
 
-			console.log(res);
 			if (res.success) {
 				return json(
 					{ message: 'success' },
@@ -92,7 +85,6 @@ router
 				);
 			}
 		} catch (err) {
-			console.log(err);
 			return json({ error: 'login failed' }, { status: 500 });
 		}
 	})
@@ -122,7 +114,6 @@ router
 
 		try {
 			const res = await db.insert(users).values({ email, password: hashedPassword }).run();
-			console.log(res);
 			if (res.success) {
 				return json({ message: 'success' }, { status: 301, headers: { location: '/' } });
 			}
@@ -152,38 +143,78 @@ router
 			}
 		);
 	})
-	.get('/-/invite_codes', async (request, extra) => {
-		const sessionId = extractSessionId(request);
-		if (!sessionId) {
-			return json({ error: 'not logged in' }, { status: 400 });
-		}
+	.get('/-/invite_codes', withRequireUser, async (request, extra) => {
 		const { db } = extra;
-		const session = await db.select({ userId: sessions.userId }).from(sessions).where(eq(sessions.sessionId, sessionId)).get();
 
-		if (!session) {
-			return json({ error: 'not logged in' }, { status: 400 });
-		}
-
-		const user = await db.select({ id: users.id, email: users.email }).from(users).where(eq(users.id, session.userId)).get();
-
-		if (!user) {
+		if (!request.user) {
+			// the middleware should prevent this, but i feel better having it here for now
+			console.error('no user, but there should be here');
 			return json({ error: 'not logged in' }, { status: 400 });
 		}
 
 		const codes = await db.select().from(inviteCodes).all();
-		console.log(codes);
 
 		return json({ codes });
 	})
-	.get('*', async (request) => {
-		return json({ message: `This is where the golink would go:` });
+	.get('/-/links', withRequireUser, async (request, extra) => {
+		const { db } = extra;
+
+		if (!request.user) {
+			// the middleware should prevent this, but i feel better having it here for now
+			console.error('no user, but there should be here');
+			return json({ error: 'not logged in' }, { status: 400 });
+		}
+
+		const allLinks = await db.select().from(links).all();
+
+		return json({ links: allLinks });
+	})
+	.get('/-/:rest+', async (request, extra) => {
+		return json({ message: 'no api route here' });
+	})
+	.get('/favicon.ico', async () => {
+		return json({ message: 'no favicon' }, { status: 404 });
+	})
+	.get('*', withFastRequireUser, async (request, { db, waitUntil }) => {
+		const [key, ...parts] = request.url
+			.toLowerCase()
+			.replace(/https?:\/\//, '')
+			.split('/')
+			.filter((x) => x !== '')
+			.slice(1);
+
+		const linkPromise = db.select().from(links).where(eq(links.key, key)).get();
+
+		const [session, link] = await Promise.all([request.sessionPromise, linkPromise]);
+
+		if (!session) {
+			return new Response('Please login first.', { status: 302, headers: { location: '/' } });
+		}
+		waitUntil(async () => {
+			// If somehow the session exists but the user doesn't,
+			// delete their session.
+			const user = await request.userCallback(session.userId);
+
+			if (!user) {
+				db.delete(sessions).where(eq(sessions.sessionId, session.sessionId)).run();
+			}
+		});
+
+		if (link) {
+			const finalString = parts.reduce((acc, part) => acc.replace('%s', part), link.destination);
+
+			return Response.redirect(finalString, 302);
+		}
+
+		return json({ key, message: "here we'd redirect with key to create a new link" });
 	});
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const pepper = 'pepper';
 		const db = drizzle(env.DB);
+		const waitUntil = ctx.waitUntil.bind(ctx);
 
-		return router.handle(request, { db, pepper }).catch(error);
+		return router.handle(request, { db, pepper, waitUntil }).catch(error);
 	},
 };

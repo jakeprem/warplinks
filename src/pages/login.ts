@@ -32,6 +32,11 @@ export const loginPage = () => {
 								}
 							}
 
+							if (res.status === 200) {
+								alert('registration successful');
+								window.location.reload();
+							}
+
 							if (res.status >= 400 && res.status < 500) {
 								const body = await res.json();
 								alert(body.error);
