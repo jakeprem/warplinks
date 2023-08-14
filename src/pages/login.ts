@@ -22,8 +22,7 @@ export const loginPage = () => {
 					};
 
 					const register = async (data) => {
-						doPost('/-/register', data).then(async (res) => {
-							console.log(res);
+						doPost('/-/auth/register', data).then(async (res) => {
 							if (res.status === 301) {
 								if (res.headers.get('location') === window.location.href) {
 									window.location.reload();
@@ -45,7 +44,7 @@ export const loginPage = () => {
 					};
 
 					const login = async (email, password) => {
-						doPost('/-/login', {
+						doPost('/-/auth/login', {
 							email,
 							password,
 						}).then(async (res) => {
