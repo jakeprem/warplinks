@@ -7,7 +7,7 @@ export const baseHtml = ({ request, template }) => {
 	const content = html`
 		<html>
 			<head>
-				<title>Yeet Links${colo && ` (${colo})`}</title>
+				<title>Warp Links${colo && ` (${colo})`}</title>
 				<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" />
 				<script src="//unpkg.com/alpinejs" defer></script>
 			</head>

@@ -60,7 +60,7 @@ export const loginPage = () => {
 						});
 					};
 				</script>
-				<h1>Yeet Links</h1>
+				<h1>Warp Links</h1>
 				<h2>Login</h2>
 				<div x-data="{ email: '', password: '' }">
 					<input type="email" x-model="email" placeholder="email" />

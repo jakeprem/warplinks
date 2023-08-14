@@ -1,9 +1,9 @@
-name = "small-recipe-799f"
+name = "warplinks-demo"
 main = "src/worker.ts"
 compatibility_date = "2023-08-07"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "small-recipe-799f"
-database_id = "3b27b46b-dc36-4270-bd2d-ead31c48d937"
+database_name = "warplinks-demo-db"
+database_id = "5b051a13-09f1-4efc-a759-a03083f5540e"
 migrations_dir = "drizzle"
