@@ -13,6 +13,7 @@ import { newLinkPage } from './pages/newLink';
 
 export interface Env {
 	DB: D1Database;
+	PEPPER: string;
 }
 
 const router = Router();
@@ -80,7 +81,7 @@ router
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		const pepper = 'pepper';
+		const pepper = env.PEPPER;
 		const db = drizzle(env.DB);
 		const waitUntil = ctx.waitUntil.bind(ctx);
 
