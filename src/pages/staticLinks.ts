@@ -9,6 +9,11 @@ export const linksPage = ({ request, links }: { request: IRequest; links: Link[]
 		<script>
 			const allLinks = ${JSON.stringify(links)};
 		</script>
+		<form action="/-/ui/links/new">
+			<!-- <label for="key">Enter a key for the new link (optional)</label> -->
+			<!-- <input id="key" type="text" name="key" placeholder="Key" /> -->
+			<input type="submit" value="New Link" />
+		</form>
 		<table x-data="{ links: allLinks }">
 			<thead>
 				<tr>

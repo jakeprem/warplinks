@@ -35,6 +35,7 @@ export const linksPage = ({ request, userEmail }: { request: IRequest; userEmail
 			<h1>Warp Links</h1>
 			<p x-data="{}">Welcome, ${userEmail} <button @click="await logout()">Logout</button></p>
 			<h2>Links</h2>
+			<a href="/-/ui/links/new">New Link</a>
 			<table class="table-auto" x-data="{ links: [] }" x-init="links = await fetchLinks()">
 				<thead>
 					<tr>

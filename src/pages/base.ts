@@ -13,9 +13,10 @@ export const baseHtml = ({ request, template }) => {
 			</head>
 			<body style="max-width:80%;margin-left:auto;margin-right:auto;">
 				<nav style="display:flex;flex-direction:row;justify-content:space-around;">
-					<a href="/-/ui">Home</a>
+					<!-- <a href="/">Home</a> -->
+					<p>Region: ${colo}</p>
 					<a href="/-/ui/links">Links</a>
-					<a href="/-/ui/invite_codes">Invite Codes</a>
+					<!-- <a href="/-/ui/invite_codes">Invite Codes</a> -->
 				</nav>
 				${template}
 			</body>
