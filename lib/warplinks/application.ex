@@ -11,8 +11,7 @@ defmodule Warplinks.Application do
       WarplinksWeb.Telemetry,
       Warplinks.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:warplinks, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:warplinks, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:warplinks, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Warplinks.PubSub},
       # Start the Finch HTTP client for sending emails
@@ -20,7 +19,8 @@ defmodule Warplinks.Application do
       # Start a worker by calling: Warplinks.Worker.start_link(arg)
       # {Warplinks.Worker, arg},
       # Start to serve requests, typically the last entry
-      WarplinksWeb.Endpoint
+      WarplinksWeb.Endpoint,
+      {Task.Supervisor, name: Warplinks.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
