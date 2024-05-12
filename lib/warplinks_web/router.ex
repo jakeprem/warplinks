@@ -17,6 +17,13 @@ defmodule WarplinksWeb.Router do
   scope "/", WarplinksWeb do
     pipe_through :browser
 
+    live "/links", LinksLive.Index, :index
+    live "/links/new", LinksLive.Index, :new
+    live "/links/:id/edit", LinksLive.Index, :edit
+
+    live "/links/:id", LinksLive.Show, :show
+    live "/links/:id/show/edit", LinksLive.Show, :edit
+
     get "/", PageController, :home
   end
 

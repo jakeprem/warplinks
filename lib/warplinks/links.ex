@@ -8,6 +8,8 @@ defmodule Warplinks.Links do
     resource(Link)
   end
 
+  def change_link(link), do: change_link(link, %{})
+
   def get_by_key(key) do
     Repo.get_by(Link, key: key)
   end
