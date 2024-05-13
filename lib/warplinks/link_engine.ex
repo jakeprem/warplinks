@@ -1,6 +1,6 @@
 defmodule Warplinks.LinkEngine do
   alias Warplinks.Link
-  alias Warplinks.LinkEngine.LuaExecutor
+  alias Warplinks.LinkEngine.{LiquidExecutor, LuaExecutor}
   alias Warplinks.Repo
 
   defmodule Context do
@@ -13,6 +13,13 @@ defmodule Warplinks.LinkEngine do
         query_string: conn.query_string,
         query_params: conn.query_params
       }
+    end
+  end
+
+  def build_redirect_url(%Context{} = ctx, %Link{type: "liquid"} = link) do
+    case LiquidExecutor.evaluate(ctx, link) do
+      {:ok, destination} -> destination
+      _ -> raise "Invalid destination"
     end
   end
 
