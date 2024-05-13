@@ -22,6 +22,7 @@ defmodule WarplinksWeb.LinkLive.FormComponent do
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:key]} type="text" label="Key" />
         <.input field={@form[:destination]} type="text" label="Destination" />
+        <.input field={@form[:template]} type="textarea" label="Template" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Link</.button>
         </:actions>

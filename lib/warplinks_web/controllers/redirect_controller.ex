@@ -4,7 +4,7 @@ defmodule WarplinksWeb.RedirectController do
   alias Warplinks.Links
   alias Warplinks.LinkEngine
 
-  def execute(conn, %{"key" => key, "path" => path}) do
+  def execute(conn, %{"key" => key}) do
     case Links.get_by_key(key) do
       nil ->
         conn
@@ -13,7 +13,11 @@ defmodule WarplinksWeb.RedirectController do
 
       link ->
         LinkEngine.increment_views_async(link)
-        redirect_url = LinkEngine.build_redirect_url(link, path)
+
+        redirect_url =
+          conn
+          |> LinkEngine.Context.new()
+          |> LinkEngine.build_redirect_url(link)
 
         redirect(conn, external: redirect_url)
     end

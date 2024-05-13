@@ -4,8 +4,14 @@ defmodule Warplinks.Link do
 
   schema "links" do
     field :name, :string
-    field :destination, :string
     field :key, :string
+    field :type, :string
+
+    field :destination, :string
+    field :template, :string
+    field :data, :map
+
+    field :description, :string
     field :views, :integer, default: 0
 
     timestamps()
@@ -14,7 +20,7 @@ defmodule Warplinks.Link do
   @doc false
   def changeset(link, attrs) do
     link
-    |> cast(attrs, [:name, :destination, :key, :views])
+    |> cast(attrs, [:name, :key, :type, :destination, :template, :data, :description, :views])
     |> validate_required([:name, :destination, :key])
     |> unique_constraint(:key)
   end

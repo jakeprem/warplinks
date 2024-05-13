@@ -59,7 +59,8 @@ defmodule Warplinks.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       # Added
-      {:ecto_resource, "~> 1.4"}
+      {:ecto_resource, "~> 1.4"},
+      {:lua, "~> 0.0"}
     ]
   end
 

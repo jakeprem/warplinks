@@ -1,8 +1,29 @@
 defmodule Warplinks.LinkEngine do
   alias Warplinks.Link
+  alias Warplinks.LinkEngine.LuaExecutor
   alias Warplinks.Repo
 
-  def build_redirect_url(link, path) do
+  defmodule Context do
+    defstruct [:request_path, :path_pieces, :query_string, :query_params]
+
+    def new(conn) do
+      %__MODULE__{
+        request_path: conn.request_path,
+        path_pieces: conn.params["path"],
+        query_string: conn.query_string,
+        query_params: conn.query_params
+      }
+    end
+  end
+
+  def build_redirect_url(%Context{} = ctx, %Link{type: "lua"} = link) do
+    case LuaExecutor.evaluate(ctx, link) do
+      {:ok, destination} -> destination
+      _ -> raise "Invalid destination"
+    end
+  end
+
+  def build_redirect_url(link, %{path_pieces: path}) do
     Enum.reduce(path, link.destination, fn piece, acc ->
       String.replace(acc, "%s", piece, global: false)
     end)
