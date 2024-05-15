@@ -2,14 +2,15 @@ defmodule Warplinks.LinkEngine.LuaExecutor do
   alias Warplinks.Link
   alias Warplinks.LinkEngine.Context
 
-  def evaluate(%Context{} = ctx, %Link{type: "lua"} = link) do
-    ctx = %{
-      link: %{
-        destination: link.destination,
-        data: link.data
-      },
-      req: ctx
-    }
+  def evaluate(%Context{} = ctx, %Link{type: :lua} = link) do
+    ctx =
+      %{
+        link: %{
+          destination: link.destination,
+          data: link.data
+        },
+        req: ctx
+      }
 
     case do_execute_lua(link.template, ctx) do
       {[destination], _} -> {:ok, destination}
@@ -25,6 +26,5 @@ defmodule Warplinks.LinkEngine.LuaExecutor do
     Lua.new()
     |> Lua.set!([:ctx], ctx)
     |> Lua.eval!(template)
-    |> IO.inspect(label: "Evaluated Lua")
   end
 end

@@ -2,18 +2,19 @@ defmodule Warplinks.LinkEngine.LiquidExecutor do
   alias Warplinks.Link
   alias Warplinks.LinkEngine.Context
 
-  def evaluate(%Context{} = ctx, %Link{type: "liquid"} = link) do
-    ctx = %{
-      link: %{
-        destination: link.destination,
-        data: link.data
-      },
-      req: ctx
-    }
+  def evaluate(%Context{} = ctx, %Link{type: :liquid} = link) do
+    ctx =
+      %{
+        link: %{
+          destination: link.destination,
+          data: link.data
+        },
+        req: ctx
+      }
 
     case do_execute_liquid(link.template, ctx) do
-      {[destination], _} -> {:ok, destination}
-      _ -> {:error, "Invalid destination"}
+      {:error, _} -> {:error, "Invalid destination"}
+      destination -> {:ok, destination}
     end
   end
 
@@ -21,9 +22,12 @@ defmodule Warplinks.LinkEngine.LiquidExecutor do
 
   defp do_execute_liquid(template, ctx) do
     with {:ok, doc} <- Liquex.parse(template) do
-      Liquex.render!(doc, ctx)
+      {pieces, _ctx} = Liquex.render!(doc, ctx)
+
+      pieces |> List.flatten() |> Enum.join()
     end
   rescue
-    _ -> {:error, "Invalid Liquid template"}
+    _ ->
+      {:error, "Invalid Liquid template"}
   end
 end

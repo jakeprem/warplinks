@@ -16,21 +16,21 @@ defmodule Warplinks.LinkEngine do
     end
   end
 
-  def build_redirect_url(%Context{} = ctx, %Link{type: "liquid"} = link) do
+  def build_redirect_url(%Context{} = ctx, %Link{type: :liquid} = link) do
     case LiquidExecutor.evaluate(ctx, link) do
       {:ok, destination} -> destination
       _ -> raise "Invalid destination"
     end
   end
 
-  def build_redirect_url(%Context{} = ctx, %Link{type: "lua"} = link) do
+  def build_redirect_url(%Context{} = ctx, %Link{type: :lua} = link) do
     case LuaExecutor.evaluate(ctx, link) do
       {:ok, destination} -> destination
       _ -> raise "Invalid destination"
     end
   end
 
-  def build_redirect_url(link, %{path_pieces: path}) do
+  def build_redirect_url(%{path_pieces: path}, link) do
     Enum.reduce(path, link.destination, fn piece, acc ->
       String.replace(acc, "%s", piece, global: false)
     end)

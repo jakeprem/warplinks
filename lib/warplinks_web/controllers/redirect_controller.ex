@@ -9,7 +9,7 @@ defmodule WarplinksWeb.RedirectController do
       nil ->
         conn
         |> put_flash(:error, "Link not found")
-        |> redirect(to: ~p"/")
+        |> redirect(to: ~p"/links/new?key=#{key}")
 
       link ->
         LinkEngine.increment_views_async(link)

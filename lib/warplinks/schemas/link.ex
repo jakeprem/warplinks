@@ -5,7 +5,7 @@ defmodule Warplinks.Link do
   schema "links" do
     field :name, :string
     field :key, :string
-    field :type, :string
+    field :type, Ecto.Enum, values: [:basic, :lua, :liquid], default: :basic
 
     field :destination, :string
     field :template, :string

@@ -20,10 +20,13 @@ defmodule WarplinksWeb.LinksLive.Index do
     |> assign(:link, Links.get_link!(id))
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :new, params) do
+    key = params["key"]
+    name = key && String.capitalize(key)
+
     socket
     |> assign(:page_title, "New Link")
-    |> assign(:link, %Link{})
+    |> assign(:link, %Link{key: key, name: name})
   end
 
   defp apply_action(socket, :index, _params) do

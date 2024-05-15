@@ -21,6 +21,7 @@ defmodule WarplinksWeb.LinkLive.FormComponent do
       >
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:key]} type="text" label="Key" />
+        <.input field={@form[:type]} type="select" label="Type" options={~w[basic lua liquid]} />
         <.input field={@form[:destination]} type="text" label="Destination" />
         <.input field={@form[:template]} type="textarea" label="Template" />
         <:actions>
