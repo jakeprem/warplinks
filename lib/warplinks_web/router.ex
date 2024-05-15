@@ -47,6 +47,6 @@ defmodule WarplinksWeb.Router do
   scope "/", WarplinksWeb do
     pipe_through :browser
 
-    get "/:key/*path", RedirectController, :execute
+    get "/*path", RedirectController, :execute
   end
 end

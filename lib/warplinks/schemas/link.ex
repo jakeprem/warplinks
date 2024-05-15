@@ -24,4 +24,10 @@ defmodule Warplinks.Link do
     |> validate_required([:name, :destination, :key])
     |> unique_constraint(:key)
   end
+
+  def after_insert(%__MODULE__{} = link, _changeset) do
+    Warplinks.LinkServer.add_link(link)
+
+    link
+  end
 end

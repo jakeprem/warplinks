@@ -20,7 +20,8 @@ defmodule Warplinks.Application do
       # {Warplinks.Worker, arg},
       # Start to serve requests, typically the last entry
       WarplinksWeb.Endpoint,
-      {Task.Supervisor, name: Warplinks.TaskSupervisor}
+      {Task.Supervisor, name: Warplinks.TaskSupervisor},
+      Warplinks.LinkServer.partition_supervisor_conf()
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

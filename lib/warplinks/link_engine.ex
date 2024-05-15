@@ -4,36 +4,53 @@ defmodule Warplinks.LinkEngine do
   alias Warplinks.Repo
 
   defmodule Context do
-    defstruct [:request_path, :path_pieces, :query_string, :query_params]
+    defstruct [:conn, :captures, :link, :type, :__version__]
 
-    def new(conn) do
+    def build(conn, captures) do
       %__MODULE__{
-        request_path: conn.request_path,
-        path_pieces: conn.params["path"],
-        query_string: conn.query_string,
-        query_params: conn.query_params
+        __version__: 1,
+        conn: %{
+          request_path: conn.request_path,
+          path_pieces: conn.params["path"],
+          query_string: conn.query_string,
+          query_params: conn.query_params
+        },
+        captures: captures,
+        link: :not_loaded
+      }
+    end
+
+    def merge_link(%Context{} = ctx, link) do
+      %{
+        ctx
+        | link: %{
+            destination: link.destination,
+            data: link.data
+          }
       }
     end
   end
 
   def build_redirect_url(%Context{} = ctx, %Link{type: :liquid} = link) do
-    case LiquidExecutor.evaluate(ctx, link) do
-      {:ok, destination} -> destination
-      _ -> raise "Invalid destination"
-    end
+    LiquidExecutor.evaluate(ctx, link)
   end
 
   def build_redirect_url(%Context{} = ctx, %Link{type: :lua} = link) do
-    case LuaExecutor.evaluate(ctx, link) do
-      {:ok, destination} -> destination
-      _ -> raise "Invalid destination"
-    end
+    LuaExecutor.evaluate(ctx, link)
   end
 
-  def build_redirect_url(%{path_pieces: path}, link) do
-    Enum.reduce(path, link.destination, fn piece, acc ->
-      String.replace(acc, "%s", piece, global: false)
-    end)
+  def build_redirect_url(
+        %Context{
+          conn: %{path_pieces: [_key | path]}
+        },
+        %Link{destination: destination}
+      ) do
+    redirect_url =
+      Enum.reduce(path, destination, fn piece, acc ->
+        String.replace(acc, "%s", piece, global: false)
+      end)
+
+    {:ok, redirect_url}
   end
 
   def increment_views_async(link) do

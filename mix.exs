@@ -61,7 +61,9 @@ defmodule Warplinks.MixProject do
       # Added
       {:ecto_resource, "~> 1.4"},
       {:lua, "~> 0.0"},
-      {:liquex, "~> 0.13"}
+      {:liquex, "~> 0.13"},
+      {:path_router, ">= 0.0.0", git: "https://github.com/jakeprem/path_router.git"},
+      {:ecto_hooks, "~> 1.2"}
     ]
   end
 

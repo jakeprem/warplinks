@@ -2,18 +2,11 @@ defmodule Warplinks.LinkEngine.LiquidExecutor do
   alias Warplinks.Link
   alias Warplinks.LinkEngine.Context
 
-  def evaluate(%Context{} = ctx, %Link{type: :liquid} = link) do
-    ctx =
-      %{
-        link: %{
-          destination: link.destination,
-          data: link.data
-        },
-        req: ctx
-      }
+  def evaluate(%Context{} = ctx, %Link{type: :liquid, template: template} = link) do
+    ctx = Context.merge_link(ctx, link)
 
-    case do_execute_liquid(link.template, ctx) do
-      {:error, _} -> {:error, "Invalid destination"}
+    case do_execute_liquid(template, ctx) do
+      {:error, error} -> {:error, error}
       destination -> {:ok, destination}
     end
   end

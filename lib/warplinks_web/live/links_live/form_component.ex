@@ -57,7 +57,7 @@ defmodule WarplinksWeb.LinkLive.FormComponent do
   end
 
   defp save_link(socket, :edit, link_params) do
-    case Links.update_link(socket.assigns.link, link_params) |> IO.inspect(label: "wat") do
+    case Links.update_link(socket.assigns.link, link_params) do
       {:ok, link} ->
         notify_parent({:saved, link})
 
@@ -72,7 +72,7 @@ defmodule WarplinksWeb.LinkLive.FormComponent do
   end
 
   defp save_link(socket, :new, link_params) do
-    case Links.create_link(link_params) |> IO.inspect(label: "WAT") do
+    case Links.create_link(link_params) do
       {:ok, link} ->
         notify_parent({:saved, link})
 
