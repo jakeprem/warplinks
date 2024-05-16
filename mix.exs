@@ -19,7 +19,7 @@ defmodule Warplinks.MixProject do
   def application do
     [
       mod: {Warplinks.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :observer, :wx]
     ]
   end
 
@@ -62,7 +62,8 @@ defmodule Warplinks.MixProject do
       {:ecto_resource, "~> 1.4"},
       {:lua, "~> 0.0"},
       {:liquex, "~> 0.13"},
-      {:path_router, ">= 0.0.0", git: "https://github.com/jakeprem/path_router.git"},
+      # Currently using an Elixir version, so commenting to avoid needing Rust
+      # {:path_router, ">= 0.0.0", git: "https://github.com/jakeprem/path_router.git"},
       {:ecto_hooks, "~> 1.2"}
     ]
   end

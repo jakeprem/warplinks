@@ -1,7 +1,7 @@
 defmodule Warplinks.LinkServer do
   use GenServer
 
-  alias PathRouter
+  alias Warplinks.Tree
   alias Warplinks.{Link, Links}
 
   @partition_supervisor_name __MODULE__.PartitionSupervisor
@@ -31,21 +31,20 @@ defmodule Warplinks.LinkServer do
   # Server callbacks
   # ----
   def init(_) do
-    router = PathRouter.new()
+    tree =
+      for link <- Links.all_links(), reduce: Tree.new() do
+        tree -> Tree.add(tree, link.key, link.id)
+      end
 
-    for link <- Links.all_links() do
-      PathRouter.add_route(router, link.key, link.id)
-    end
-
-    {:ok, router}
+    {:ok, tree}
   end
 
-  def handle_call({:add_link, key, id}, _from, router) do
-    PathRouter.add_route(router, key, id)
-    {:reply, :ok, router}
+  def handle_call({:add_link, key, id}, _from, tree) do
+    Tree.add(tree, key, id)
+    {:reply, :ok, tree}
   end
 
-  def handle_call({:find_link, path}, _from, router) do
-    {:reply, PathRouter.match_route(router, path), router}
+  def handle_call({:find_link, path}, _from, tree) do
+    {:reply, Tree.find(tree, path), tree}
   end
 end

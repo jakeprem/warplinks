@@ -8,7 +8,7 @@ defmodule WarplinksWeb.RedirectController do
   alias Warplinks.LinkServer
 
   def execute(conn, %{"path" => [key | _]}) do
-    with {:ok, id, captures} <-
+    with {id, captures} <-
            LinkServer.find_link(conn.request_path),
          %Link{} = link <- Links.get_link(id) do
       LinkEngine.increment_views_async(link)
