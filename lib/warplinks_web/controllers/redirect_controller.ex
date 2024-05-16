@@ -4,6 +4,7 @@ defmodule WarplinksWeb.RedirectController do
   alias Warplinks.Link
   alias Warplinks.Links
   alias Warplinks.LinkEngine
+  alias Warplinks.LinkEngine.Context
   alias Warplinks.LinkServer
 
   def execute(conn, %{"path" => [key | _]}) do
@@ -29,8 +30,8 @@ defmodule WarplinksWeb.RedirectController do
 
   defp do_build_redirect_url(conn, captures, link) do
     conn
-    |> LinkEngine.Context.build(captures)
-    |> IO.inspect(label: "Context")
+    |> Context.build(captures)
+    |> Context.merge_link(link)
     |> LinkEngine.build_redirect_url(link)
   end
 end

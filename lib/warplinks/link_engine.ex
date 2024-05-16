@@ -4,7 +4,7 @@ defmodule Warplinks.LinkEngine do
   alias Warplinks.Repo
 
   defmodule Context do
-    defstruct [:conn, :captures, :link, :type, :__version__]
+    defstruct [:conn, :captures, :link, :__version__]
 
     def build(conn, captures) do
       %__MODULE__{

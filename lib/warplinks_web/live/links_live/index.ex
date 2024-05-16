@@ -43,7 +43,7 @@ defmodule WarplinksWeb.LinksLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     link = Links.get_link!(id)
-    {:ok, _} = Links.delete_link!(link)
+    Links.delete_link!(link)
 
     {:noreply, stream_delete(socket, :links, link)}
   end
