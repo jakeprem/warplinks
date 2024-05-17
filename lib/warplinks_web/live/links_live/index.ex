@@ -6,7 +6,7 @@ defmodule WarplinksWeb.LinksLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :links, Links.all_links())}
+    {:ok, stream(socket, :links, Links.all_links(order_by: [desc: :views]))}
   end
 
   @impl true
