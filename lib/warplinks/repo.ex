@@ -1,5 +1,5 @@
 defmodule Warplinks.Repo do
-  use EctoHooks.Repo,
+  use Ecto.Repo,
     otp_app: :warplinks,
     adapter: Ecto.Adapters.SQLite3
 end

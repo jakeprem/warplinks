@@ -3,6 +3,7 @@ defmodule Warplinks.LinkServer do
 
   alias Warplinks.Tree
   alias Warplinks.{Link, Links}
+  alias Warplinks.PubSub
 
   @partition_supervisor_name __MODULE__.PartitionSupervisor
 
@@ -31,6 +32,8 @@ defmodule Warplinks.LinkServer do
   # Server callbacks
   # ----
   def init(_) do
+    PubSub.subscribe("links")
+
     tree =
       for link <- Links.all_links(), reduce: Tree.new() do
         tree -> Tree.add(tree, link.key, link.id)
@@ -45,5 +48,10 @@ defmodule Warplinks.LinkServer do
 
   def handle_call({:find_link, path}, _from, tree) do
     {:reply, Tree.find(tree, path), tree}
+  end
+
+  def handle_info(%{topic: "links", event: "created", payload: %{"id" => id}}, tree) do
+    link = Links.get_link!(id)
+    {:noreply, Tree.add(tree, link.key, link.id)}
   end
 end
