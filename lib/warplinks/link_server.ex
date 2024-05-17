@@ -40,8 +40,7 @@ defmodule Warplinks.LinkServer do
   end
 
   def handle_call({:add_link, key, id}, _from, tree) do
-    Tree.add(tree, key, id)
-    {:reply, :ok, tree}
+    {:reply, :ok, Tree.add(tree, key, id)}
   end
 
   def handle_call({:find_link, path}, _from, tree) do
