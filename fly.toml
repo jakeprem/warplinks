@@ -1,0 +1,37 @@
+# fly.toml app configuration file generated for warplinks on 2024-05-16T01:40:58-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'warplinks'
+primary_region = 'atl'
+kill_signal = 'SIGTERM'
+
+[build]
+
+[env]
+DATABASE_PATH = '/mnt/warplinks/warplinks.db'
+PHX_HOST = 'warplinks.fly.dev'
+PORT = '8080'
+
+[[mounts]]
+source = 'warplinks'
+destination = '/mnt/warplinks'
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = true
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
+
+[http_service.concurrency]
+type = 'connections'
+hard_limit = 1000
+soft_limit = 1000
+
+[[vm]]
+memory = '512mb'
+cpu_kind = 'shared'
+cpus = 1

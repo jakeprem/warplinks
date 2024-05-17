@@ -7,6 +7,8 @@ defmodule Warplinks.Application do
 
   @impl true
   def start(_type, _args) do
+    Warplinks.Release.migrate()
+
     children = [
       WarplinksWeb.Telemetry,
       Warplinks.Repo,
